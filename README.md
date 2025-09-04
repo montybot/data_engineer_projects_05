@@ -17,7 +17,7 @@ Le projet a donc pour but de fournir :
 * un conteneur Python qui télécharge le dataset, l’extrait et l’importe dans MongoDB,
 * un système d’authentification sécurisé avec plusieurs rôles.
 
-Ce guide s’adresse à une personne **débutante avec Docker** et MongoDB.
+Ce guide s’adresse à une personne qui souhaite utiliser cette base de données.
 Il détaille étape par étape l’installation, l’exécution et la vérification du bon fonctionnement du pipeline.
 
 ---
@@ -54,13 +54,13 @@ cd healthcare-mongo-migration
 
 ### 2.3 Configurer les paramètres
 
-Duplique le fichier d’exemple :
+Dupliquez le fichier d’exemple :
 
 ```bash
 cp .env.example .env
 ```
 
-Ouvre `.env` avec un éditeur et remplace les mots de passe `change-me-...` par des valeurs robustes.
+Ouvrez `.env` avec un éditeur et remplacez les mots de passe `change-me-...` par des valeurs robustes.
 Exemple minimal :
 
 ```env
@@ -207,7 +207,7 @@ Chaque utilisateur a des droits limités selon ses besoins.
 
 ## 5. Exemples de connexions
 
-> ⚠️ Remplace `<mot_de_passe>` par les valeurs définies dans ton fichier `.env`.
+> ⚠️ Remplacez `<mot_de_passe>` par les valeurs définies dans ton fichier `.env`.
 
 ### 5.1 Connexion avec **admin** (super utilisateur)
 
