@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_DBNAME: ${MONGO_DBNAME}
+      MONGO_APP_INGESTOR_USER: ${MONGO_APP_INGESTOR_USER}
+      MONGO_APP_INGESTOR_PASSWORD: ${MONGO_APP_INGESTOR_PASSWORD}
+      MONGO_APP_ANALYST_USER: ${MONGO_APP_ANALYST_USER}
+      MONGO_APP_ANALYST_PASSWORD: ${MONGO_APP_ANALYST_PASSWORD}
+      MONGO_APP_DBADMIN_USER: ${MONGO_APP_DBADMIN_USER}
+      MONGO_APP_DBADMIN_PASSWORD: ${MONGO_APP_DBADMIN_PASSWORD}
+    volumes:
+      - ./mongo/data:/data/db
+      - ./mongo/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 }).ok' | grep 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  migrate:
+    build: ./migrate
+    container_name: migrate
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      # Mongo
+      MONGODB_URI: ${MONGODB_URI}
+      MONGO_DBNAME: ${MONGO_DBNAME}
+      MIGRATION_COLLECTION: ${MIGRATION_COLLECTION}
+      MIGRATION_FILE: ${MIGRATION_FILE}
+      MIGRATION_ID_KEY: ${MIGRATION_ID_KEY}
+      MIGRATION_MAPPING: ${MIGRATION_MAPPING}
+      # Téléchargement / extraction
+      DATASET_URL: ${DATASET_URL}
+      DATA_DIR: ${DATA_DIR}
+      DATA_ZIP: ${DATA_ZIP}
+    volumes:
+      - ./data:/data

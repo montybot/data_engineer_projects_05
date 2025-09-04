@@ -1,0 +1,27 @@
+{
+  "field_renames": {
+    "Name": "patient.name.full",
+    "Age": "patient.age",
+    "Gender": "patient.gender",
+    "Blood Type": "patient.blood_type",
+    "Medical Condition": "medical_condition",
+    "Date of Admission": "date_of_admission",
+    "Doctor": "doctor",
+    "Hospital": "hospital",
+    "Insurance Provider": "insurance.provider",
+    "Billing Amount": "billing_amount",
+    "Room Number": "room_number",
+    "Admission Type": "admission_type",
+    "Discharge Date": "discharge_date",
+    "Medication": "medication",
+    "Test Results": "test_results"
+  },
+  "conversions": {
+    "patient.age": "int",
+    "billing_amount": "float",
+    "date_of_admission": "date",
+    "discharge_date": "date",
+    "patient.gender": { "map": { "Male": "male", "Female": "female" } },
+    "patient.blood_type": "upper"
+  }
+}

@@ -1,0 +1,15 @@
+# Secrets & env
+.env
+*.key
+*.pem
+
+# Données & volumes
+data/
+mongo/data/
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
