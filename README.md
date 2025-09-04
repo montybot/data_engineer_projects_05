@@ -46,7 +46,7 @@ Il détaille étape par étape l’installation, l’exécution et la vérificat
 ### 2.2 Cloner le projet
 
 ```bash
-git clone https://github.com/ton-compte/healthcare-mongo-migration.git
+git clone https://github.com/montybot/data_engineer_projects_05.git
 cd healthcare-mongo-migration
 ```
 
