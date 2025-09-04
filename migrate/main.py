@@ -129,9 +129,9 @@ def enrich_and_normalize(doc):
 
     # 3) normaliser assureur sur vocabulaire fermé
     prov = get_nested(doc, "insurance.provider")
-    allowed = {"Aetna", "Blue Cross", "Cigna", "UnitedHealthcare", "Medicare"}
-    if prov and prov not in allowed:
-        set_nested(doc, "insurance.provider", "Other")
+    #allowed = {"Aetna", "Blue Cross", "Cigna", "UnitedHealthcare", "Medicare"}
+    #if prov and prov not in allowed:
+    #    set_nested(doc, "insurance.provider", "Other")
 
     # 4) calcul de l'identifiant fonctionnel déterministe
     doa = get_nested(doc, "date_of_admission")
