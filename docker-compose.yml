@@ -20,6 +20,7 @@ services:
     volumes:
       - ./mongo/data:/data/db
       - ./mongo/init:/docker-entrypoint-initdb.d:ro
+      - ./tools:/tools
     healthcheck:
       test: ["CMD-SHELL", "mongosh --quiet -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 }).ok' | grep 1"]
       interval: 10s
