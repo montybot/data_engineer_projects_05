@@ -47,7 +47,7 @@ Il détaille étape par étape l’installation, l’exécution et la vérificat
 
 ```bash
 git clone https://github.com/montybot/data_engineer_projects_05.git
-cd healthcare-mongo-migration
+cd data_engineer_projects_05
 ```
 
 ---
