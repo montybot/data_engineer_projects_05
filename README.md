@@ -286,10 +286,6 @@ db.admissions.aggregate([{ $sample: { size: 5 } }])
 
 ---
 
-Voici une **section 7** pour ton `README.md` décrivant les outils présents dans le dossier `tools/` :
-
----
-
 ## 7. Outils d'administration et d'analyse (`tools/`)
 
 Le répertoire `tools/` contient des **scripts MongoDB** destinés à la **vérification** et à l'**analyse** de la base de données.
