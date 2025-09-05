@@ -283,3 +283,168 @@ db.admissions.aggregate([{ $sample: { size: 5 } }])
 | Lancer la migration complète    | `docker compose run --rm migrate`                                                       |
 | Ouvrir un shell Mongo           | `docker exec -it mongo mongosh -u admin -p AdminPass123 --authenticationDatabase admin` |
 | Arrêter tous les services       | `docker compose down`                                                                   |
+
+---
+
+Voici une **section 7** pour ton `README.md` décrivant les outils présents dans le dossier `tools/` :
+
+---
+
+## 7. Outils d'administration et d'analyse (`tools/`)
+
+Le répertoire `tools/` contient des **scripts MongoDB** destinés à la **vérification** et à l'**analyse** de la base de données.
+Ces scripts peuvent être exécutés directement dans le conteneur MongoDB pour effectuer des contrôles de qualité et obtenir des indicateurs clés.
+
+### 7.1 Vérification des doublons : `check_duplicates.js`
+
+Ce script vérifie qu'il n'existe pas de doublons dans la collection `admissions` selon deux critères :
+
+1. **Doublons par identifiant fonctionnel** (`admission_id`)
+
+   * Vérifie la présence d'un index unique sur `admission_id`.
+   * Détecte les éventuelles clés dupliquées.
+
+2. **Doublons logiques**
+
+   * Basés sur la combinaison :
+     `patient.name.full` (en minuscules) + `date_of_admission` (jour) + `hospital` + `room_number`.
+
+#### Exécution
+
+Depuis la racine du projet :
+
+```bash
+docker exec -i mongo mongosh \
+  -u $MONGO_INITDB_ROOT_USERNAME \
+  -p $MONGO_INITDB_ROOT_PASSWORD \
+  --authenticationDatabase admin < tools/check_duplicates.js
+```
+
+#### Exemple de sortie
+
+```
+============================================================
+Base: medical | Collection: admissions
+============================================================
+
+Documents (estimation rapide): 56000
+
+============================================================
+Vérification de l'index unique sur 'admission_id'
+============================================================
+OK: un index UNIQUE est présent sur { admission_id: 1 }.
+
+============================================================
+Recherche de doublons par 'admission_id'
+============================================================
+Aucun doublon trouvé par 'admission_id'.
+
+============================================================
+Recherche de doublons par clé composite
+============================================================
+Aucun doublon trouvé par clé composite logique.
+
+============================================================
+Résumé
+============================================================
+Documents (countDocuments exact): 56000
+Aucun doublon détecté (identifiant et clé composite).
+
+Fin du script.
+```
+
+---
+
+### 7.2 Analyses et KPI : `dashboard_analytics.js`
+
+Ce script génère toutes les **analyses statistiques** visibles sur le tableau de bord healthcare, directement depuis MongoDB :
+
+* **KPI globaux** :
+  Total du montant de facturation, nombre de patients, hôpitaux, médecins, compagnies d’assurance.
+* **Évolution annuelle** du montant de facturation.
+* **Répartition des patients** :
+
+  * Par tranche d’âge (`13-17`, `18-35`, `36-55`, `56-65`, `66+`),
+  * Par genre,
+  * Par condition médicale,
+  * Par type d’admission.
+* **Montants par fournisseur d’assurance** avec pourcentages.
+
+Le script prend également en charge des **filtres optionnels** (année, mois, pathologie, genre, etc.), configurables directement au début du fichier.
+
+#### Configuration des filtres
+
+Dans `dashboard_analytics.js`, section `FILTERS` :
+
+```javascript
+const FILTERS = {
+  year: 2023,                 // Filtrer sur une année précise, ex: 2023
+  month: null,                // Filtrer sur un mois précis (1-12)
+  medical_condition: "Diabetes",
+  insurance_provider: null,
+  test_results: null,
+  blood_type: null,
+  gender: null
+};
+```
+
+Mettre une valeur à `null` désactive le filtre.
+
+#### Exécution
+
+```bash
+docker exec -i mongo mongosh \
+  -u $MONGO_INITDB_ROOT_USERNAME \
+  -p $MONGO_INITDB_ROOT_PASSWORD \
+  --authenticationDatabase admin < tools/dashboard_analytics.js
+```
+
+#### Exemple de sortie (extrait)
+
+```
+============================================================
+KPI globaux (avec filtres appliqués)
+============================================================
+{
+  total_billing_amount: 1420000000,
+  total_hospital: 40000,
+  total_patient: 56000,
+  total_doctors: 40000,
+  total_insurance_company: 5
+}
+
+============================================================
+Total Billing Amount by Year
+============================================================
+2019: 190000000
+2020: 287000000
+2021: 280000000
+2022: 281000000
+2023: 282000000
+2024: 98000000
+
+============================================================
+Total patient by Age Group
+============================================================
+[
+  { age_group: '13-17', total_patient: 2000 },
+  { age_group: '18-35', total_patient: 13000 },
+  { age_group: '36-55', total_patient: 16000 },
+  { age_group: '56-65', total_patient: 8000 },
+  { age_group: '66+', total_patient: 16000 }
+]
+```
+
+---
+
+### 7.3 Bonnes pratiques
+
+| Action                                                     | Outil recommandé         | Quand l'utiliser                                 |
+| ---------------------------------------------------------- | ------------------------ | ------------------------------------------------ |
+| Vérifier l'absence de doublons avant une analyse ou export | `check_duplicates.js`    | Après une nouvelle migration ou un import massif |
+| Générer des indicateurs pour un dashboard ou un reporting  | `dashboard_analytics.js` | À chaque mise à jour du dataset                  |
+
+---
+
+Ces scripts permettent de **contrôler la qualité des données** et de **générer des analyses directement depuis MongoDB**, sans avoir à recourir à un outil externe ou à réécrire les requêtes complexes.
+
