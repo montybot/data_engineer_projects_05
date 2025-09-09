@@ -60,7 +60,7 @@ Dupliquez le fichier d’exemple :
 cp .env.example .env
 ```
 
-Ouvrez `.env` avec un éditeur et remplacez les mots de passe `change-me-...` par des valeurs robustes.
+Ouvrez `.env` avec un éditeur et remplacez les mots de passe `xxx_PASSWORD=...` par des valeurs robustes.
 Exemple minimal :
 
 ```env
