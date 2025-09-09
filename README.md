@@ -91,7 +91,9 @@ Alternatives sûres :
 
 Utiliser l’URI sans mot de passe, et laisser mongosh le demander :
 
+```bash
 mongosh "mongodb://analyst@mongo.example.com:27017/medical?authSource=admin&authMechanism=SCRAM-SHA-256&tls=true"
+```
 
 Pour automatiser, passez les mots de passe via une variable d’environnement éphémère (attention aux journaux et à l’historique shell) :
 
