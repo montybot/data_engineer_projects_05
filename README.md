@@ -74,6 +74,41 @@ MONGO_APP_DBADMIN_USER=dbadmin
 MONGO_APP_DBADMIN_PASSWORD=DbAdminPass000
 ```
 
+Pratique mongosh pour éviter d’exposer les mots de passe :
+
+Ne jamais mettre le mot de passe en ligne de commande
+
+```js
+mongosh --host mongo.example.com:27017 \
+  --username analyst \
+  --authenticationDatabase admin \
+  --authenticationMechanism SCRAM-SHA-256 \
+  --tls \
+  --password   # mongosh demandera le mot de passe en saisie masquée
+```
+
+Alternatives sûres :
+
+Utiliser l’URI sans mot de passe, et laisser mongosh le demander :
+
+mongosh "mongodb://analyst@mongo.example.com:27017/medical?authSource=admin&authMechanism=SCRAM-SHA-256&tls=true"
+
+Pour automatiser, passez les mots de passe via une variable d’environnement éphémère (attention aux journaux et à l’historique shell) :
+
+```env
+MONGO_PWD="$(cat /run/secrets/analyst_pwd)" \
+mongosh --username analyst --authenticationDatabase admin --tls --password "$MONGO_PWD"
+unset MONGO_PWD
+```
+
+Désactiver l’enregistrement de l’historique mongosh si tu manipules des secrets :
+
+```env
+// dans mongosh
+disableTelemetry()
+// et éviter d’exécuter des commandes qui contiennent des secrets en clair
+```
+
 ---
 
 ### 2.4 Lancer MongoDB
